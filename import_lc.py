@@ -13,15 +13,15 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 def get_links(driver):
 	# Problem page
-	total = driver.find_element(By.XPATH, "//*[@id='brief_stats']/p/strong").text
-	totalnumber = int(total.split(' ')[0])
-	currentnumber = 0
-	print ("Problems found: " + str(totalnumber))
+	# total = driver.find_element(By.XPATH, "//*[@id='brief_stats']/p/strong").text
+	# totalnumber = int(total.split(' ')[0])
+	# currentnumber = 0
+	# print ("Problems found: " + str(totalnumber))
 
-	ff = Select(search_box = driver.find_element("name", "filterchosen"))
+	ff = driver.find_element(By.XPATH, "//[text()='Status']")
 	ff.select_by_visible_text("Solved Problems")
 	list_of_links = []
-	list_of_problems = search_box = driver.find_element("name", "problemList").\
+	list_of_problems = driver.find_element("name", "problemList").\
 							  find_element_by_tag_name("tbody").\
 							  find_elements_by_tag_name("tr")
 	for row in list_of_problems:
@@ -78,7 +78,9 @@ def main(args):
 			while(True):
 				time.sleep(5)
 				driver.get("https://leetcode.com/problemset/all/")
+
 				links_to_problems = get_links(driver)
+
 				while (i < len(links_to_problems)):
 					filename = links_to_problems[i].text
 					folder = str(args.path) + "/" + filename + "/"
@@ -88,7 +90,7 @@ def main(args):
 					if not os.path.exists(folder):
 						os.makedirs(folder)
 						links_to_problems[i].click()
-						driver.implicitly_wait(2000)
+						time.sleep(2)
 
 						# Grep problem's specifications
 						problem = driver.find_element(By.XPATH, "/html/body/div[2]/div[1]/div[1]/div/div[3]")
@@ -96,8 +98,8 @@ def main(args):
 						text = text.replace("\nSubscribe to see which companies asked this question","")
 						text = text.replace("\nShow Tags","")
 						text = text.replace("\nShow Similar Problems","")
-						
-						driver.implicitly_wait(2000)
+
+						time.sleep(2)
 						nextButton = driver.find_element("link text", "My Submissions")
 						nextButton.click()
 						driver.implicitly_wait(10000)
