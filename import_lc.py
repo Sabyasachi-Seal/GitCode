@@ -36,17 +36,17 @@ def get_links(driver):
 
 
 	# getting the list of problems
-	i = []
 	# this is the div of rows
-	list_of_problems = driver.find_elements(By.XPATH, "//div[@role = 'rowgroup']")
+	list_of_problems = driver.find_elements(By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")
 
 	for i in list_of_problems:
-		innerDiv = i.find_elements(By.XPATH, "//div[@role = 'cell']")[1]
-		link = innerDiv.find_element(By.XPATH,'./following::a')
-		print(i.text, innerDiv.text, link.text, link.get_attribute('href'))
+		innerDiv = i.find_elements(By.XPATH, ".//div[@role = 'cell']")[1]
+		link = innerDiv.find_element(By.TAG_NAME,'a')
+		print(innerDiv.text, link.get_attribute("href") ,sep="\n")
 
 	
 	totalnumber = len(list_of_problems)
+	print ("Total number of problems: " + str(totalnumber))
 
 	for row in list_of_problems:
 		check = row.find_element_by_tag_name("td")
