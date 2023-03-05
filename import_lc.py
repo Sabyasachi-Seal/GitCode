@@ -13,10 +13,29 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 def get_links(driver):
 	time.sleep(2)
+	# getting the solved problems
+
+	# Status button
 	ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Status')]")
 	ff.click()
 	time.sleep(2)
-	ff.select_by_visible_text("Solved")
+
+	# Solved button
+	ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Solved')]")
+	ff.click()
+	time.sleep(3)
+
+	# making the list as 100 per page
+	ff = driver.find_element(By.XPATH, "//*[contains(text(), '50 / page')]")
+	ff.click()
+	time.sleep(2)
+	# selecting 100 per page
+	ff = driver.find_element(By.XPATH, "//*[contains(text(), '100 / page')]")
+	ff.click()
+	time.sleep(2)
+
+
+
 	list_of_links = []
 	list_of_problems = driver.find_element("name", "problemList").\
 							  find_element_by_tag_name("tbody").\
