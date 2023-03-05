@@ -12,18 +12,18 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 def get_links(driver):
-	# Problem page
-	# total = driver.find_element(By.XPATH, "//*[@id='brief_stats']/p/strong").text
-	# totalnumber = int(total.split(' ')[0])
-	# currentnumber = 0
-	# print ("Problems found: " + str(totalnumber))
-
-	ff = driver.find_element(By.XPATH, "//[text()='Status']")
-	ff.select_by_visible_text("Solved Problems")
+	time.sleep(2)
+	ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Status')]")
+	ff.click()
+	time.sleep(2)
+	ff.select_by_visible_text("Solved")
 	list_of_links = []
 	list_of_problems = driver.find_element("name", "problemList").\
 							  find_element_by_tag_name("tbody").\
 							  find_elements_by_tag_name("tr")
+	
+	totalnumber = len(list_of_problems)
+
 	for row in list_of_problems:
 		check = row.find_element_by_tag_name("td")
 		if check.is_displayed():
