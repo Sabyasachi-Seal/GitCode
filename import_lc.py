@@ -99,69 +99,64 @@ def main(args):
 		finally:
 			print ("Login completed...")
 			i = 0
-			while(True):
 
-				time.sleep(5)
+			time.sleep(5)
 
-				driver.get("https://leetcode.com/problemset/all/")
+			driver.get("https://leetcode.com/problemset/all/")
 
-				links_to_problems, names = get_links(driver)
+			links_to_problems, names = get_links(driver)
 
-				while (i < len(links_to_problems)):
+			while (i < len(links_to_problems)):
 
-					filename = names[i].split(".")[-1].replace(".", "").strip() # getting the name of the problem
+				filename = names[i].split(".")[-1].replace(".", "").strip() # getting the name of the problem
 
-					folder = str(args.path) + "/" + filename + "/"
+				folder = str(args.path) + "/" + filename + "/"
 
-					if os.path.exists(folder):
-						i = i + 1
-						continue
-
-					if not os.path.exists(folder):
-						# os.makedirs(folder)
-						driver.get(links_to_problems[i])
-						# driver.implicitly_wait(10)
-						time.sleep(2)
-
-						# Grep problem's specifications
-
-						problem = driver.find_element(By.CLASS_NAME, "_1l1MA")# this gets the div with the div of the text of the problem
-						print(problem.text)
-
-						text = str(problem.text.encode('ascii', 'ignore').decode('ascii'))
-						text = text.replace("\nSubscribe to see which companies asked this question","")
-						text = text.replace("\nShow Tags","")
-						text = text.replace("\nShow Similar Problems","")
-
-						# time.sleep(2)
-						# nextButton = driver.find_element("link text", "My Submissions")
-						# nextButton.click()
-						# driver.implicitly_wait(10000)
-						# nextButton = driver.find_element(By.PARTIAL_LINK_TEXT, 'Accepted')
-						# nextButton.click()
-						# time.sleep(5)
-						# code_page = driver.find_element_by_tag_name("body").text
-						# time.sleep(5)
-						# result = code_page[code_page.find("class "):code_page.find("Back to problem")]
-						# #print "== " + str(i+1) + "/" + str(len(links_to_problems)) + " == " + filename
-						# # #print result
-						# if "Language: python" in code_page:
-						# 	f = open(folder + "main.py", 'w+')
-						# elif "Language: java" in code_page:
-						# 	f = open(folder + "/main.java", 'w+')
-						# f.write(result)
-						# f.flush()
-						# f.close()
-						# f = open(folder + "requirements.txt", "w+")
-						# f.write(filename + "\nFrom: " + driver.current_url + "\n\n")
-						# f.write(text)
-						# f.flush()
-						# f.close
-						# break
-
+				if os.path.exists(folder):
 					i = i + 1
-				if (i >= len(links_to_problems)):
+					continue
+
+				if not os.path.exists(folder):
+					# os.makedirs(folder)
+					driver.get(links_to_problems[i])
+					# driver.implicitly_wait(10)
+					time.sleep(2)
+
+					# Grep problem's specifications
+					problem = driver.find_element(By.CLASS_NAME, "_1l1MA") # this gets the div with the div of the text of the problem
+
+					question = str(problem.text.encode('ascii', 'ignore').decode('ascii')) # this gets the question of the problem
+
+					time.sleep(2)
+					nextButton = driver.find_element("link text", "Submissions")
+					nextButton.click()
+					time.sleep(2)
+
+					nextButton = driver.find_element(By.XPATH, "//*[contains(text(), 'Accepted')]")
+					nextButton.click()
+					time.sleep(2)
+
+					code_page = driver.find_element(By.TAG_NAME, "code")
+					print(code_page.text)
+					time.sleep(5)
+					result = code_page[code_page.find("class "):code_page.find("Back to problem")]
+					#print "== " + str(i+1) + "/" + str(len(links_to_problems)) + " == " + filename
+					#print result
+					if "Language: python" in code_page:
+						f = open(folder + "main.py", 'w+')
+					elif "Language: java" in code_page:
+						f = open(folder + "/main.java", 'w+')
+					f.write(result)
+					f.flush()
+					f.close()
+					f = open(folder + "requirements.txt", "w+")
+					f.write(filename + "\nFrom: " + driver.current_url + "\n\n")
+					f.write(text)
+					f.flush()
+					f.close
 					break
+
+				i = i + 1
 			driver.close()
 
 def parse_args():
