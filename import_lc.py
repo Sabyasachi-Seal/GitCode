@@ -18,21 +18,21 @@ def get_links(driver):
 	# Status button
 	ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Status')]")
 	ff.click()
-	time.sleep(2)
+	time.sleep(1)
 
 	# Solved button
 	ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Solved')]")
 	ff.click()
-	time.sleep(3)
+	time.sleep(1)
 
 	# making the list as 100 per page
 	ff = driver.find_element(By.XPATH, "//*[contains(text(), '50 / page')]")
 	ff.click()
-	time.sleep(2)
+	time.sleep(1)
 	# selecting 100 per page
 	ff = driver.find_element(By.XPATH, "//*[contains(text(), '100 / page')]")
 	ff.click()
-	time.sleep(2)
+	time.sleep(1)
 
 
 	# getting the list of problems
@@ -123,13 +123,10 @@ def main(args):
 						# driver.implicitly_wait(10)
 						time.sleep(2)
 
-						# # Grep problem's specifications
+						# Grep problem's specifications
 
-						problem = driver.find_elements(By.XPATH, "//*[contains(@data-key, 'description-content')]")# this gets the div with the div of the text of the problem
-						print(problem)
-						problem = problem.find_elements(By.XPATH, ".//div")[1] # gets the inner div with the <p> tags of the problem
-
-						print (problem.text)
+						problem = driver.find_element(By.CLASS_NAME, "_1l1MA")# this gets the div with the div of the text of the problem
+						print(problem.text)
 
 						text = str(problem.text.encode('ascii', 'ignore').decode('ascii'))
 						text = text.replace("\nSubscribe to see which companies asked this question","")
@@ -162,7 +159,7 @@ def main(args):
 						# f.close
 						# break
 
-				i = i + 1
+					i = i + 1
 				if (i >= len(links_to_problems)):
 					break
 			driver.close()
