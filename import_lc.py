@@ -36,26 +36,31 @@ def get_links(driver):
 
 
 	# getting the list of problems
-	# this is the div of rows
+
+	# this is the list of div of rows
 	list_of_problems = driver.find_elements(By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")
+	
+	list_of_links = []
+	list_of_names = []
 
 	for i in list_of_problems:
-		innerDiv = i.find_elements(By.XPATH, ".//div[@role = 'cell']")[1]
-		link = innerDiv.find_element(By.TAG_NAME,'a')
-		print(innerDiv.text, link.get_attribute("href") ,sep="\n")
 
+		# this gets the div of the row
+		innerDiv = i.find_elements(By.XPATH, ".//div[@role = 'cell']")[1]
+		
+		name = innerDiv.text # this gets the name of the problem
+		link = innerDiv.find_element(By.TAG_NAME,'a').get_attribute("href") # gets the link of the problem
+		
+		if link not in list_of_links: list_of_links.append(link)
+		if name not in list_of_names: list_of_names.append(name)
 	
 	totalnumber = len(list_of_problems)
 	print ("Total number of problems: " + str(totalnumber))
 
-	for row in list_of_problems:
-		check = row.find_element_by_tag_name("td")
-		if check.is_displayed():
-			currentnumber = currentnumber + 1
-			list_of_links.append(row.find_element_by_tag_name("a"));
-			sys.stdout.write("[ " + str(float(currentnumber)/float(totalnumber)*100)[:5] + "% ] Loading next problem... \r")
-			sys.stdout.flush()
-	return list_of_links
+	print(list_of_links)
+	print(list_of_names)
+
+	return list_of_links, list_of_names
 
 
 def print_links(driver):
@@ -79,75 +84,84 @@ def main(args):
 		EC.presence_of_element_located((By.ID, "id_login")) #This is a dummy element
 	)
 	finally:
-	
 		form_textfield = driver.find_element(By.ID, 'id_login')
 		form_textfield.send_keys(args.email)
 
-		# driver.implicitly_wait(10)
 		form_textfield2 = driver.find_element(By.ID, 'id_password')
 		form_textfield2.send_keys(args.password)
 
-		# driver.implicitly_wait(10)
 		nextButton = driver.find_element(By.ID, 'signin_btn')
 		driver.execute_script("arguments[0].click();", nextButton)
 
 		try:
-			elem = WebDriverWait(driver, 30).until(
-			EC.presence_of_element_located((By.CLASS_NAME, "ant-dropdown-link")))
+			# waiting till the login is completed
+			WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "ant-dropdown-link")))
 		finally:
 			print ("Login completed...")
-
 			i = 0
-
 			while(True):
+
 				time.sleep(5)
+
 				driver.get("https://leetcode.com/problemset/all/")
 
-				links_to_problems = get_links(driver)
+				links_to_problems, names = get_links(driver)
 
 				while (i < len(links_to_problems)):
-					filename = links_to_problems[i].text
+
+					filename = names[i].split(".")[-1].replace(".", "").strip() # getting the name of the problem
+
 					folder = str(args.path) + "/" + filename + "/"
+
 					if os.path.exists(folder):
 						i = i + 1
 						continue
+
 					if not os.path.exists(folder):
-						os.makedirs(folder)
-						links_to_problems[i].click()
+						# os.makedirs(folder)
+						driver.get(links_to_problems[i])
+						# driver.implicitly_wait(10)
 						time.sleep(2)
 
-						# Grep problem's specifications
-						problem = driver.find_element(By.XPATH, "/html/body/div[2]/div[1]/div[1]/div/div[3]")
+						# # Grep problem's specifications
+
+						problem = driver.find_elements(By.XPATH, "//*[contains(@data-key, 'description-content')]")# this gets the div with the div of the text of the problem
+						print(problem)
+						problem = problem.find_elements(By.XPATH, ".//div")[1] # gets the inner div with the <p> tags of the problem
+
+						print (problem.text)
+
 						text = str(problem.text.encode('ascii', 'ignore').decode('ascii'))
 						text = text.replace("\nSubscribe to see which companies asked this question","")
 						text = text.replace("\nShow Tags","")
 						text = text.replace("\nShow Similar Problems","")
 
-						time.sleep(2)
-						nextButton = driver.find_element("link text", "My Submissions")
-						nextButton.click()
-						driver.implicitly_wait(10000)
-						nextButton = driver.find_element(By.PARTIAL_LINK_TEXT, 'Accepted')
-						nextButton.click()
-						time.sleep(5)
-						code_page = driver.find_element_by_tag_name("body").text
-						time.sleep(5)
-						result = code_page[code_page.find("class "):code_page.find("Back to problem")]
-						#print "== " + str(i+1) + "/" + str(len(links_to_problems)) + " == " + filename
-						# #print result
-						if "Language: python" in code_page:
-							f = open(folder + "main.py", 'w+')
-						elif "Language: java" in code_page:
-							f = open(folder + "/main.java", 'w+')
-						f.write(result)
-						f.flush()
-						f.close()
-						f = open(folder + "requirements.txt", "w+")
-						f.write(filename + "\nFrom: " + driver.current_url + "\n\n")
-						f.write(text)
-						f.flush()
-						f.close
-						break
+						# time.sleep(2)
+						# nextButton = driver.find_element("link text", "My Submissions")
+						# nextButton.click()
+						# driver.implicitly_wait(10000)
+						# nextButton = driver.find_element(By.PARTIAL_LINK_TEXT, 'Accepted')
+						# nextButton.click()
+						# time.sleep(5)
+						# code_page = driver.find_element_by_tag_name("body").text
+						# time.sleep(5)
+						# result = code_page[code_page.find("class "):code_page.find("Back to problem")]
+						# #print "== " + str(i+1) + "/" + str(len(links_to_problems)) + " == " + filename
+						# # #print result
+						# if "Language: python" in code_page:
+						# 	f = open(folder + "main.py", 'w+')
+						# elif "Language: java" in code_page:
+						# 	f = open(folder + "/main.java", 'w+')
+						# f.write(result)
+						# f.flush()
+						# f.close()
+						# f = open(folder + "requirements.txt", "w+")
+						# f.write(filename + "\nFrom: " + driver.current_url + "\n\n")
+						# f.write(text)
+						# f.flush()
+						# f.close
+						# break
+
 				i = i + 1
 				if (i >= len(links_to_problems)):
 					break
