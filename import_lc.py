@@ -51,8 +51,8 @@ def get_links(driver):
 		name = innerDiv.text # this gets the name of the problem
 		link = innerDiv.find_element(By.TAG_NAME,'a').get_attribute("href") # gets the link of the problem
 		
-		if link not in list_of_links: list_of_links.append(link)
-		if name not in list_of_names: list_of_names.append(name)
+		list_of_links.append(link)
+		list_of_names.append(name)
 	
 	totalnumber = len(list_of_problems)
 	print ("Total number of problems: " + str(totalnumber))
@@ -60,7 +60,7 @@ def get_links(driver):
 	print(list_of_links)
 	print(list_of_names)
 
-	return list_of_links, list_of_names
+	return list_of_links[1:], list_of_names
 
 
 def print_links(driver):
@@ -108,18 +108,17 @@ def main(args):
 
 			while (i < len(links_to_problems)):
 
-				filename = names[i].split(".")[-1].replace(".", "").strip() # getting the name of the problem
+				problemname = names[i].split(".")[-1].replace(".", "").strip() # getting the name of the problem
 
-				folder = str(args.path) + "/" + filename + "/"
+				folder = str(args.path) + "/" + problemname + "/"
 
 				if os.path.exists(folder):
 					i = i + 1
 					continue
 
 				if not os.path.exists(folder):
-					# os.makedirs(folder)
+					os.makedirs(folder)
 					driver.get(links_to_problems[i])
-					# driver.implicitly_wait(10)
 					time.sleep(2)
 
 					# Grep problem's specifications
@@ -127,41 +126,50 @@ def main(args):
 
 					question = str(problem.text.encode('ascii', 'ignore').decode('ascii')) # this gets the question of the problem
 
-					time.sleep(2)
+					# getting submission button
 					nextButton = driver.find_element("link text", "Submissions")
 					nextButton.click()
 					time.sleep(2)
 
+					# getting the accepted button
 					nextButton = driver.find_element(By.XPATH, "//*[contains(text(), 'Accepted')]")
 					nextButton.click()
 					time.sleep(2)
 
+					# getting the first accepted submission code 
 					code_page = driver.find_element(By.TAG_NAME, "code")
-					print(code_page.text)
+
+					lang = code_page.get_attribute("class")
+					print(lang)
+
 					time.sleep(5)
-					result = code_page[code_page.find("class "):code_page.find("Back to problem")]
-					#print "== " + str(i+1) + "/" + str(len(links_to_problems)) + " == " + filename
-					#print result
-					if "Language: python" in code_page:
-						f = open(folder + "main.py", 'w+')
-					elif "Language: java" in code_page:
-						f = open(folder + "/main.java", 'w+')
-					f.write(result)
+
+					if "language-java" in lang:
+						ext = ".java"
+					elif "language-python" in lang:
+						ext = ".py"
+					elif "language-cpp" in lang:
+						ext = ".cpp"
+					elif "language-c" in lang:
+						ext = ".c"
+
+					f = open(folder + problemname.replace(" ", "-").lower() + ext,  'w+')
+
+					f.write(code_page.text)
 					f.flush()
 					f.close()
-					f = open(folder + "requirements.txt", "w+")
-					f.write(filename + "\nFrom: " + driver.current_url + "\n\n")
-					f.write(text)
+
+					f = open(folder + f"{problemname}.md", "w+")
+					f.write(f"# {problemname}" + "\n## From: " + driver.current_url + "\n\n")
+					f.write(question)
 					f.flush()
 					f.close
-					break
 
 				i = i + 1
 			driver.close()
 
 def parse_args():
 	import argparse
-	import itertools
 	import sys
 
 	parser = argparse.ArgumentParser(description='LeetCode - Google Login script.')
