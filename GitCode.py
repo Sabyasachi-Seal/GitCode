@@ -217,6 +217,7 @@ def main(args):
 
                 time.sleep(2)
 
+                ext = ""
                 # setting the extension of the file
                 if "language-java" in lang:
                     ext = ".java"
@@ -236,7 +237,7 @@ def main(args):
                 f.close()
 
                 # making the readme file
-                f = open(folder + f"{problemname}.md", "w+")
+                f = open(folder + f"README.md", "w+")
                 f.write(f"# {problemname}" +f"\n### [LeetCode Link]({driver.current_url})\n")
                 f.write(question)
                 f.flush()
@@ -288,7 +289,7 @@ def main(args):
                         print(e)
                         driver.refresh()
 
-                commitmessage = f"Time: {runtime} ({runtimeBeats}) | Memory: {memory} ({memoryBeats})"
+                commitMessage = f"Time: {runtime} ({runtimeBeats}) | Memory: {memory} ({memoryBeats})"
 
                  # now we need to commit the changes with proper commit message
                 for file in os.listdir(folder):
@@ -299,7 +300,7 @@ def main(args):
                     
 
                 commitMessage = f"git commit -m '{commitMessage}'"
-                os.system(commitmessage)
+                os.system(commitMessage)
 
                 os.system("git push")
                 time.sleep(2)
@@ -313,8 +314,7 @@ def parse_args():
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(
-        description='LeetCode to GitHub Exporter.')
+    parser = argparse.ArgumentParser(description='LeetCode to GitHub Exporter.')
     parser.add_argument('email', action='store', help='Email')
     parser.add_argument('password', action='store', help='Password')
     parser.add_argument('path', action='store', help='Path to save files')
