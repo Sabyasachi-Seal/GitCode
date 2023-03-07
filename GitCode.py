@@ -1,3 +1,7 @@
+# installing depednencies
+os.system("pip install selenium")
+os.system("pip install webdriver-manager")
+
 import os
 import time
 from selenium import webdriver
@@ -6,7 +10,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
-
 
 def get_links(driver):
 	time.sleep(2)
@@ -86,6 +89,10 @@ def main(args):
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 	driver.maximize_window()
 
+	# removing the soln folder if it exists
+	if os.path.exists(args.path):
+		os.system(f"rm -rf {args.path}")
+
 	# going to the leetcode page
 	driver.get("https://leetcode.com/")
 
@@ -129,10 +136,6 @@ def main(args):
 				problemname = names[i].split(".")[-1].replace(".", "").strip() # getting the name of the problem
 
 				folder = str(args.path) + "/" + problemname + "/"
-
-				# if os.path.exists(folder):
-				# 	i = i + 1
-				# 	continue
 
 				if True:
 					os.makedirs(folder)
@@ -186,6 +189,10 @@ def main(args):
 					f.flush()
 					f.close
 
+					# now we need to commit the changes with proper commit message
+					os("git add .")
+					os("git commit -m " + f"Added {problemname} solution")
+
 				i = i + 1
 
 			driver.close()
@@ -194,13 +201,15 @@ def parse_args():
 	import argparse
 	import sys
 
-	parser = argparse.ArgumentParser(description='LeetCode - Google Login script.')
-	parser.add_argument('email', action='store', help='email')
-	parser.add_argument('password', action='store', help='password')
+	parser = argparse.ArgumentParser(description='LeetCode to GitHub Exporter.')
+	parser.add_argument('email', action='store', help='Email')
+	parser.add_argument('password', action='store', help='Password')
 	parser.add_argument('path', action='store', help='Path to save files')
+	
 	if len(sys.argv)!=4:
 		parser.print_help()
 		sys.exit(1)
+
 	return parser.parse_args()
 
 if __name__ == "__main__":
