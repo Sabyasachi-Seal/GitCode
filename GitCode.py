@@ -289,7 +289,7 @@ def main(args):
                         print(e)
                         driver.refresh()
 
-                commitMessage = f"Time: {runtime} ({runtimeBeats}) | Memory: {memory} ({memoryBeats})"
+                commitMessage = f"Time: {runtime} ({runtimeBeats}) | Memory: {memory} ({memoryBeats}) - GitCode"
 
                  # now we need to commit the changes with proper commit message
                 for file in os.listdir(folder):
