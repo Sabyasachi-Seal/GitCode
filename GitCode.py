@@ -36,6 +36,10 @@ def get_links(driver):
             driver.refresh()
     time.sleep(1)
 
+    # need to wait while the page loads, this checks if the reset button is loaded
+    WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Reset')]")))
+    time.sleep(10)
+
     list_of_links = []
     list_of_names = []
 
@@ -54,7 +58,7 @@ def get_links(driver):
             try:
                 driver.find_elements(By.XPATH, ".//nav[@role = 'navigation']//button[@aria-label='next']")[-1].click()
             except Exception as e:
-                print(e)
+                # print(e)
                 break
 
         ind = 0;
@@ -62,20 +66,27 @@ def get_links(driver):
         while(ind < len(driver.find_elements(By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']"))):
 
             # this gets the div of the row
-            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")))
-            innerDiv = driver.find_elements(By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")[ind]
-            WebDriverWait(innerDiv, 30).until(EC.presence_of_element_located((By.XPATH, ".//div[@role = 'cell']")))
-            innerDiv = innerDiv.find_elements(By.XPATH, ".//div[@role = 'cell']")[1]
+            while(True):
+                try:
+                    WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")))
+                    innerDiv = driver.find_elements(By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")[ind]
+                    WebDriverWait(innerDiv, 30).until(EC.presence_of_element_located((By.XPATH, ".//div[@role = 'cell']")))
+                    innerDiv = innerDiv.find_elements(By.XPATH, ".//div[@role = 'cell']")[1]
+                    break
+                except:
+                    driver.refresh()
+                    time.sleep(5)
 
             name = innerDiv.text  # this gets the name of the problem
                 
-            link = WebDriverWait(innerDiv, 30).until(EC.presence_of_element_located((By.TAG_NAME, 'a')))
             while(True):
                 try:
+                    link = WebDriverWait(innerDiv, 30).until(EC.presence_of_element_located((By.TAG_NAME, 'a')))
                     link = link.get_attribute("href")  # gets the link of the problem
                     break
                 except:
-                    link = WebDriverWait(innerDiv, 30).until(EC.presence_of_element_located((By.TAG_NAME, 'a')))
+                    driver.refresh()
+                    time.sleep(5)
 
             list_of_links.append(link)
             list_of_names.append(name)
@@ -108,7 +119,6 @@ def main(args):
         os.system(f"rm -rf {args.path}")
 
     os.makedirs(args.path)
-    os.system(f"git add {args.path}")
 
     # going to the leetcode page
     driver.get("https://leetcode.com/")
@@ -120,17 +130,23 @@ def main(args):
         # waiting till the login form is loaded
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "id_login")))
     finally:
-        # username field
-        form_textfield = driver.find_element(By.ID, 'id_login')
-        form_textfield.send_keys(args.email)
+        while True:
+            try:
+                # username field
+                form_textfield = driver.find_element(By.ID, 'id_login')
+                form_textfield.send_keys(args.email)
 
-        # password field
-        form_textfield2 = driver.find_element(By.ID, 'id_password')
-        form_textfield2.send_keys(args.password)
+                # password field
+                form_textfield2 = driver.find_element(By.ID, 'id_password')
+                form_textfield2.send_keys(args.password)
 
-        # sign in button
-        nextButton = driver.find_element(By.ID, 'signin_btn')
-        driver.execute_script("arguments[0].click();", nextButton)
+                # sign in button
+                nextButton = driver.find_element(By.ID, 'signin_btn')
+                driver.execute_script("arguments[0].click();", nextButton)
+                break
+            except:
+                driver.refresh()
+                time.sleep(5)
 
         try:
             # waiting till the login is completed
@@ -226,9 +242,67 @@ def main(args):
                 f.flush()
                 f.close
 
-                # now we need to commit the changes with proper commit message
-                commitmessage = f"Added {problemname} solution"
-                os.system("git commit -m " + commitmessage)
+                os.system(f"git add {args.path}/")
+
+                # getting the runtime, runtime beats, memory, and memory beats
+                while(True):
+                    try:
+                        # this is just the runtime text element
+                        runtimeElement = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Runtime')]")))
+                        # this is the parent div of the runtime text element
+                        runtimeParent = runtimeElement.find_element(By.XPATH, "..")
+                        # this is the parent div of the parent div of the whole runtime element
+                        runtimeClass = runtimeParent.find_element(By.XPATH, "..")
+                        # this is the beats % for the runtime
+                        runtimeBeats = runtimeClass.find_element(By.XPATH, ".//*[contains(text(), 'Beats')]")
+                        # this is the parent div of the beats% for the
+                        runtimeBeatsParent = runtimeBeats.find_element(By.XPATH, "..")
+                        # this is the text of the beats% for the runtime
+                        runtimeBeats = runtimeBeatsParent.text.split("\n")[-1]
+                        # this is the runtime used
+                        runtime = runtimeParent.text.split("\n")[-1].replace(" ", "")
+
+                        # print(runtime, runtimeBeats)
+
+
+                        # this is just the memory text element
+                        memoryElement = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Memory')]")))
+                        # this is the parent div of the memory text element
+                        memoryParent = memoryElement.find_element(By.XPATH, "..")
+                        # this is the parent div of the parent div of the whole memory element
+                        memoryClass = memoryParent.find_element(By.XPATH, "..")
+                        # this is the beats % for the memory
+                        memoryBeats = memoryClass.find_element(By.XPATH, ".//*[contains(text(), 'Beats')]")
+                        # this is the parent div of the beats% for the
+                        memoryBeatsParent = memoryBeats.find_element(By.XPATH, "..")
+                        # this is the text of the beats% for the memory
+                        memoryBeats = memoryBeatsParent.text.split("\n")[-1]
+                        # this is the memory used
+                        memory = memoryParent.text.split("\n")[-1].replace(" ", "")
+
+                        # print(memory, memoryBeats)
+
+                        break
+
+                    except Exception as e:
+                        print(e)
+                        driver.refresh()
+
+                commitmessage = f"Time: {runtime} ({runtimeBeats}) | Memory: {memory} ({memoryBeats})"
+
+                 # now we need to commit the changes with proper commit message
+                for file in os.listdir(folder):
+                    commitFilname = folder.replace(" ", "\ ") + file.replace(" ","\ ") 
+                    addMessage = f"git add {commitFilname}"
+                    print(addMessage)
+                    os.system(addMessage)
+                    
+
+                commitMessage = f"git commit -m '{commitMessage}'"
+                os.system(commitmessage)
+
+                os.system("git push")
+                time.sleep(2)
 
                 i = i + 1
 
