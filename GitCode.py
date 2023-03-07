@@ -16,13 +16,24 @@ def get_links(driver):
     # getting the solved problems
 
     # Status button
-    ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Status')]")
-    ff.click()
+    while(True):
+        try:
+            ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Status')]")
+            ff.click()
+            break
+        except:
+            driver.refresh()
     time.sleep(1)
 
     # Solved button
-    ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Solved')]")
-    ff.click()
+    
+    while(True):
+        try:
+            ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Solved')]")
+            ff.click()
+            break
+        except:
+            driver.refresh()
     time.sleep(1)
 
     list_of_links = []
@@ -39,10 +50,11 @@ def get_links(driver):
         print("Page: " + str(page))
 
         if page != 1:
-            navigationButton = WebDriverWait(driver, 20).until(find)
+            WebDriverWait(driver, 20).until(find)
             try:
                 driver.find_elements(By.XPATH, ".//nav[@role = 'navigation']//button[@aria-label='next']")[-1].click()
-            except Exception:
+            except Exception as e:
+                print(e)
                 break
 
         ind = 0;
@@ -50,11 +62,20 @@ def get_links(driver):
         while(ind < len(driver.find_elements(By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']"))):
 
             # this gets the div of the row
-            innerDiv = driver.find_elements(By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")[ind].find_elements(By.XPATH, ".//div[@role = 'cell']")[1]
+            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")))
+            innerDiv = driver.find_elements(By.XPATH, ".//div[@role = 'rowgroup']//div[@role = 'row']")[ind]
+            WebDriverWait(innerDiv, 30).until(EC.presence_of_element_located((By.XPATH, ".//div[@role = 'cell']")))
+            innerDiv = innerDiv.find_elements(By.XPATH, ".//div[@role = 'cell']")[1]
 
             name = innerDiv.text  # this gets the name of the problem
-
-            link = innerDiv.find_element(By.TAG_NAME, 'a').get_attribute("href")  # gets the link of the problem
+                
+            link = WebDriverWait(innerDiv, 30).until(EC.presence_of_element_located((By.TAG_NAME, 'a')))
+            while(True):
+                try:
+                    link = link.get_attribute("href")  # gets the link of the problem
+                    break
+                except:
+                    link = WebDriverWait(innerDiv, 30).until(EC.presence_of_element_located((By.TAG_NAME, 'a')))
 
             list_of_links.append(link)
             list_of_names.append(name)
@@ -86,16 +107,18 @@ def main(args):
     if os.path.exists(args.path):
         os.system(f"rm -rf {args.path}")
 
+    os.makedirs(args.path)
+    os.system(f"git add {args.path}")
+
     # going to the leetcode page
     driver.get("https://leetcode.com/")
 
     # login
-    link = driver.find_element("link text", "Sign in")
+    link = WebDriverWait(driver, 30).until(EC.presence_of_element_located(("link text", "Sign in")))
     link.click()
     try:
         # waiting till the login form is loaded
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "id_login"))
-                                        )
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "id_login")))
     finally:
         # username field
         form_textfield = driver.find_element(By.ID, 'id_login')
@@ -111,8 +134,7 @@ def main(args):
 
         try:
             # waiting till the login is completed
-            WebDriverWait(driver, 30).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "ant-dropdown-link")))
+            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "ant-dropdown-link")))
         finally:
             print("Login completed...")
             i = 0
@@ -131,68 +153,82 @@ def main(args):
                 problemname = names[i].split(".")[-1].replace(".", "").strip()
 
                 folder = str(args.path) + "/" + problemname + "/"
+                
+                if os.path.exists(folder):
+                    i = i + 1
+                    continue
 
-                if True:
-                    os.makedirs(folder)
-                    driver.get(links_to_problems[i])
-                    time.sleep(2)
+                os.makedirs(folder)
+                driver.get(links_to_problems[i])
 
-                    # Grep problem's specifications
-                    # this gets the div with the div of the text of the problem
-                    problem = driver.find_element(By.CLASS_NAME, "_1l1MA")
+                # Grep problem's specifications
+                while True:
+                    try:
+                        # this gets the div with the div of the text of the problem
+                        problem = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "_1l1MA")))
 
-                    # this gets the question of the problem
-                    question = problem.get_attribute("innerHTML")
+                        # this gets the question of the problem
+                        question = problem.get_attribute("innerHTML")
 
-                    # getting submission button
-                    nextButton = driver.find_element(
-                        "link text", "Submissions")
-                    nextButton.click()
-                    time.sleep(2)
+                        # getting submission button
+                        nextButton = WebDriverWait(driver, 30).until(EC.presence_of_element_located(("link text", "Submissions")))
+                        nextButton.click()
+                        break
+                    except:
+                        driver.refresh()
 
-                    # getting the accepted button
-                    nextButton = driver.find_element(
-                        By.XPATH, "//*[contains(text(), 'Accepted')]")
-                    nextButton.click()
-                    time.sleep(4)
+                # getting the accepted button
+                while(True):
+                    try:
+                        nextButton = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Accepted')]")))
+                        nextButton.click()
+                        break
+                    except:
+                        driver.refresh()
 
-                    # getting the first accepted submission code
-                    code_page = driver.find_element(By.TAG_NAME, "code")
+                
 
-                    # grepping the language of the code
-                    lang = code_page.get_attribute("class")
-                    time.sleep(5)
+                # getting the first accepted submission code
+                code_page = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.TAG_NAME, "code")))
 
-                    # setting the extension of the file
-                    if "language-java" in lang:
-                        ext = ".java"
-                    elif "language-python" in lang:
-                        ext = ".py"
-                    elif "language-cpp" in lang:
-                        ext = ".cpp"
-                    elif "language-c" in lang:
-                        ext = ".c"
+                # grepping the language of the code
+                while(True):
+                    try:
+                        lang = code_page.get_attribute("class")
+                        break
+                    except:
+                        continue
 
-                    # making the file
-                    f = open(folder + problemname.replace(" ",
-                             "-").lower() + ext,  'w+')
+                time.sleep(2)
 
-                    # writing the code to the file
-                    f.write(code_page.text)
-                    f.flush()
-                    f.close()
+                # setting the extension of the file
+                if "language-java" in lang:
+                    ext = ".java"
+                elif "language-python" in lang:
+                    ext = ".py"
+                elif "language-cpp" in lang:
+                    ext = ".cpp"
+                elif "language-c" in lang:
+                    ext = ".c"
 
-                    # making the readme file
-                    f = open(folder + f"{problemname}.md", "w+")
-                    f.write(f"# {problemname}" +
-                            f"\n### [LeetCode Link]({driver.current_url})\n")
-                    f.write(question)
-                    f.flush()
-                    f.close
+                # making the file
+                f = open(folder + problemname.replace(" ","-").lower() + ext,  'w+')
 
-                    # now we need to commit the changes with proper commit message
-                    # os.system("git add .")
-                    # os.system("git commit -m " + f"Added {problemname} solution")
+                # writing the code to the file
+                f.write(code_page.text)
+                f.flush()
+                f.close()
+
+                # making the readme file
+                f = open(folder + f"{problemname}.md", "w+")
+                f.write(f"# {problemname}" +f"\n### [LeetCode Link]({driver.current_url})\n")
+                f.write(question)
+                f.flush()
+                f.close
+
+                # now we need to commit the changes with proper commit message
+                commitmessage = f"Added {problemname} solution"
+                os.system("git commit -m " + commitmessage)
 
                 i = i + 1
 
