@@ -15,7 +15,8 @@ Use this tool to download your solutions from [LeetCode.com](leetcode.com) to yo
 
 ###  HOW TO [For Local Only]
 - [IMPORTANT] Pre-Configure GitHub account on your computer.
-- Clone this repoistory anywhere on your computer. 
+- Fork this repository.
+- Clone the forked repoistory anywhere on your computer. 
 - Run GitCode.py
 ###  HOW TO [For Github Upload]
 - [IMPORTANT] Pre-Configure GitHub account on your computer.
