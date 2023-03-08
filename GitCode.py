@@ -130,24 +130,6 @@ def main(args):
         # waiting till the login form is loaded
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "id_login")))
     finally:
-        while True:
-            try:
-                # username field
-                form_textfield = driver.find_element(By.ID, 'id_login')
-                form_textfield.send_keys(args.email)
-
-                # password field
-                form_textfield2 = driver.find_element(By.ID, 'id_password')
-                form_textfield2.send_keys(args.password)
-
-                # sign in button
-                nextButton = driver.find_element(By.ID, 'signin_btn')
-                driver.execute_script("arguments[0].click();", nextButton)
-                break
-            except:
-                driver.refresh()
-                time.sleep(5)
-
         try:
             # waiting till the login is completed
             WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "ant-dropdown-link")))
@@ -302,9 +284,6 @@ def main(args):
                 commitMessage = f"git commit -m '{commitMessage}'"
                 os.system(commitMessage)
 
-                os.system("git push")
-                time.sleep(2)
-
                 i = i + 1
 
             driver.close()
@@ -315,11 +294,11 @@ def parse_args():
     import sys
 
     parser = argparse.ArgumentParser(description='LeetCode to GitHub Exporter.')
-    parser.add_argument('email', action='store', help='Email')
-    parser.add_argument('password', action='store', help='Password')
+    # parser.add_argument('email', action='store', help='Mode')
+    # parser.add_argument('password', action='store', help='Password')
     parser.add_argument('path', action='store', help='Path to save files')
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 1:
         parser.print_help()
         sys.exit(1)
 
@@ -328,3 +307,4 @@ def parse_args():
 
 if __name__ == "__main__":
     main(parse_args())
+    os.system("git push")
