@@ -1,4 +1,7 @@
 # installing depednencies
+import os
+os.system("pip install selenium")
+os.system("pip install webdriver-manager")
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
@@ -6,10 +9,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 import time
-import os
-os.system("pip install selenium")
-os.system("pip install webdriver-manager")
-
 
 def get_links(driver):
     time.sleep(2)
@@ -114,11 +113,11 @@ def main(args):
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     driver.maximize_window()
 
-    # removing the soln folder if it exists
-    if os.path.exists(args.path):
-        os.system(f"rm -rf {args.path}")
+    # making the soln folder if it doesnt exists
+    if not os.path.exists(args.path):
+        os.makedirs(args.path)
 
-    os.makedirs(args.path)
+    
 
     # going to the leetcode page
     driver.get("https://leetcode.com/")
@@ -132,7 +131,14 @@ def main(args):
     finally:
         try:
             # waiting till the login is completed
-            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "ant-dropdown-link")))
+            sleepTime = 0
+            sleepMax = 180
+            while(len(driver.find_elements(By.XPATH, ".//div[@id = 'navbar-right-container']//div")) <= 1):
+                time.sleep(1)
+                sleepMax = sleepMax + 1
+                if sleepTime > sleepMax:
+                    sleepTime = 0;
+                    driver.refresh()
         finally:
             print("Login completed...")
             i = 0
@@ -294,17 +300,12 @@ def parse_args():
     import sys
 
     parser = argparse.ArgumentParser(description='LeetCode to GitHub Exporter.')
-    # parser.add_argument('email', action='store', help='Mode')
-    # parser.add_argument('password', action='store', help='Password')
     parser.add_argument('path', action='store', help='Path to save files')
-
-    if len(sys.argv) != 1:
-        parser.print_help()
-        sys.exit(1)
 
     return parser.parse_args()
 
 
 if __name__ == "__main__":
+    os.system("git pull")
     main(parse_args())
     os.system("git push")
