@@ -108,8 +108,13 @@ def get_links(driver):
 
     return list_of_links, list_of_names
 
+def acceptAlert(alert):
+    try:
+        alert.accept()
+    except:
+        pass
 
-def main(args):
+def main(path='.'):
     # setting up the driver
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     driver.maximize_window()
@@ -117,9 +122,13 @@ def main(args):
     # making alert object
     alert = Alert(driver)
 
+    # handling os dir issue
+    if path == '':
+        path = '.'
+
     # making the soln folder if it doesnt exists
-    if not os.path.exists(args.path):
-        os.makedirs(args.path)
+    if not os.path.exists(path):
+        os.makedirs(path)
 
     # going to the leetcode page
     driver.get("https://leetcode.com/")
@@ -127,7 +136,7 @@ def main(args):
     # printing the nessary info for the user not to login
     driver.execute_script("window.alert('Greetings from GitCode! Please donot interact with the browser now.')")
     time.sleep(5)
-    alert.accept()
+    acceptAlert(alert=alert)
 
     # login
     link = WebDriverWait(driver, 30).until(EC.presence_of_element_located(("link text", "Sign in")))
@@ -139,7 +148,7 @@ def main(args):
         try:
             driver.execute_script("window.alert('Now please login to your account.')")
             time.sleep(5)
-            alert.accept()
+            acceptAlert(alert=alert)
 
             # waiting till the login is completed
             sleepTime = 0
@@ -154,7 +163,7 @@ def main(args):
             print("Login completed...")
             driver.execute_script("window.alert('Now sit back and watch GitCode do the work for you!')")
             time.sleep(5)
-            alert.accept()
+            acceptAlert(alert=alert)
 
             i = 0
 
@@ -170,7 +179,7 @@ def main(args):
                 # getting the name of the problem
                 problemname = names[i].split(".")[-1].replace(".", "").strip()
 
-                folder = str(args.path) + "/" + problemname + "/"
+                folder = str(path) + "/" + problemname + "/"
                 
                 if os.path.exists(folder):
                     i = i + 1
@@ -245,7 +254,7 @@ def main(args):
                 f.flush()
                 f.close
 
-                os.system(f"git add {args.path}/")
+                os.system(f"git add {path}/")
 
                 # getting the runtime, runtime beats, memory, and memory beats
                 while(True):
@@ -308,22 +317,12 @@ def main(args):
 
             driver.execute_script("window.alert('You solved solutions have been exported to your GitHub repository! Thanks for using GitCode!')")
             time.sleep(5)
-            alert.accept()
+            acceptAlert(alert=alert)
 
             driver.close()
 
 
-def parse_args():
-    import argparse
-    import sys
-
-    parser = argparse.ArgumentParser(description='LeetCode to GitHub Exporter.')
-    parser.add_argument('path', action='store', help='Path to save files')
-
-    return parser.parse_args()
-
-
 if __name__ == "__main__":
     os.system("git pull")
-    main(parse_args())
+    main(path = input("Enter the path to save the files: "))
     os.system("git push")
