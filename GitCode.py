@@ -1,7 +1,7 @@
 # installing depednencies
 import os
 os.system("pip install selenium")
-os.system("pip install webdriver-manager")
+os.system("pip install webdriver_manager")
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
