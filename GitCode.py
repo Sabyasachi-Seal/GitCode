@@ -1,4 +1,4 @@
-# installing depednencies
+# installing dependencies
 import os
 os.system("pip install selenium")
 os.system("pip install webdriver_manager")
@@ -18,22 +18,26 @@ def get_links(driver):
     # Status button
     while(True):
         try:
-            ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Status')]")
+            ff = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Status')]")))
             ff.click()
             break
         except:
             driver.refresh()
+            time.sleep(2)
+        
     time.sleep(1)
 
     # Solved button
     
     while(True):
         try:
-            ff = driver.find_element(By.XPATH, "//*[contains(text(), 'Solved')]")
+            ff = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Solved')]")))
             ff.click()
             break
         except:
             driver.refresh()
+            time.sleep(2)
+        
     time.sleep(1)
 
     # need to wait while the page loads, this checks if the reset button is loaded
