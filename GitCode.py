@@ -310,7 +310,7 @@ def main(path='.'):
                     os.system(addMessage)
                     
 
-                commitMessage = f"git commit -mf '{commitMessage}'"
+                commitMessage = f"git commit -m '{commitMessage}'"
                 os.system(commitMessage)
 
                 i = i + 1
