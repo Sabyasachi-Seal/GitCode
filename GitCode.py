@@ -226,7 +226,7 @@ def main(args):
 
                 # making the readme file
                 f = open(folder + f"README.md", "w+")
-                f.write(f"# {problemname}" +f"\n### [LeetCode Link]({driver.current_url})\n")
+                f.write(f"# [{problemname}]({links_to_problems[i]})\n")
                 f.write(question)
                 f.flush()
                 f.close
