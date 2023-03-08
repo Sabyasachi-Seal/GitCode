@@ -12,7 +12,6 @@ from selenium import webdriver
 import time
 
 def get_links(driver):
-    time.sleep(2)
     # getting the solved problems
 
     # Status button
@@ -23,7 +22,7 @@ def get_links(driver):
             break
         except:
             driver.refresh()
-            time.sleep(2)
+            time.sleep(5)
         
     time.sleep(1)
 
@@ -36,7 +35,7 @@ def get_links(driver):
             break
         except:
             driver.refresh()
-            time.sleep(2)
+            time.sleep(5)
         
     time.sleep(1)
 
@@ -173,6 +172,7 @@ def main(path='.'):
 
             # going to problem page
             driver.get("https://leetcode.com/problemset/all/")
+            time.sleep(10)
 
             # getting the list of links and names of them
             links_to_problems, names = get_links(driver)
