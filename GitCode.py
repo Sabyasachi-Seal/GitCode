@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 import time
@@ -113,14 +114,20 @@ def main(args):
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     driver.maximize_window()
 
+    # making alert object
+    alert = Alert(driver)
+
     # making the soln folder if it doesnt exists
     if not os.path.exists(args.path):
         os.makedirs(args.path)
 
-    
-
     # going to the leetcode page
     driver.get("https://leetcode.com/")
+
+    # printing the nessary info for the user not to login
+    driver.execute_script("window.alert('Greetings from GitCode! Please donot interact with the browser now.')")
+    time.sleep(5)
+    alert.accept()
 
     # login
     link = WebDriverWait(driver, 30).until(EC.presence_of_element_located(("link text", "Sign in")))
@@ -130,9 +137,13 @@ def main(args):
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "id_login")))
     finally:
         try:
+            driver.execute_script("window.alert('Now please login to your account.')")
+            time.sleep(5)
+            alert.accept()
+
             # waiting till the login is completed
             sleepTime = 0
-            sleepMax = 180
+            sleepMax = 180 # 3 mins
             while(len(driver.find_elements(By.XPATH, ".//div[@id = 'navbar-right-container']//div")) <= 1):
                 time.sleep(1)
                 sleepMax = sleepMax + 1
@@ -141,8 +152,11 @@ def main(args):
                     driver.refresh()
         finally:
             print("Login completed...")
-            i = 0
+            driver.execute_script("window.alert('Now sit back and watch GitCode do the work for you!')")
             time.sleep(5)
+            alert.accept()
+
+            i = 0
 
             # going to problem page
             driver.get("https://leetcode.com/problemset/all/")
@@ -291,6 +305,10 @@ def main(args):
                 os.system(commitMessage)
 
                 i = i + 1
+
+            driver.execute_script("window.alert('You solved solutions have been exported to your GitHub repository! Thanks for using GitCode!')")
+            time.sleep(5)
+            alert.accept()
 
             driver.close()
 
