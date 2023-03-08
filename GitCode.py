@@ -335,4 +335,4 @@ def main(path='.'):
 if __name__ == "__main__":
     os.system("git pull")
     main(path = input("Enter the path to save the files: "))
-    os.system("git push")
+    # os.system("git push")
