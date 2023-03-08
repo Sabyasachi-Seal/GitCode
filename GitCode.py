@@ -220,7 +220,13 @@ def main(path='.'):
                 
 
                 # getting the first accepted submission code
-                code_page = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.TAG_NAME, "code")))
+                while(True):
+                    try:
+                        code_page = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "code")))
+                        break
+                    except:
+                        driver.refresh()
+                        time.sleep(2)
 
                 # grepping the language of the code
                 while(True):
