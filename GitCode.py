@@ -223,6 +223,7 @@ def main(path='.'):
                 while(True):
                     try:
                         code_page = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "code")))
+                        code = code_page.text
                         break
                     except:
                         driver.refresh()
@@ -249,11 +250,12 @@ def main(path='.'):
                 elif "language-c" in lang:
                     ext = ".c"
 
+
                 # making the file
                 f = open(folder + problemname.replace(" ","-").lower() + ext,  'w+')
 
                 # writing the code to the file
-                f.write(code_page.text)
+                f.write(code)
                 f.flush()
                 f.close()
 
