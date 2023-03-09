@@ -199,7 +199,7 @@ def main(path='.'):
                         problem = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "_1l1MA")))
 
                         # this gets the question of the problem
-                        question = problem.get_attribute("innerHTML")
+                        question = problem.get_attribute("innerHTML").encode('utf-8')
 
                         # getting submission button
                         nextButton = WebDriverWait(driver, 30).until(EC.presence_of_element_located(("link text", "Submissions")))
@@ -337,4 +337,4 @@ def main(path='.'):
 if __name__ == "__main__":
     os.system("git pull")
     main(path = input("Enter the path to save the files: "))
-    # os.system("git push")
+    os.system("git push")
