@@ -200,6 +200,7 @@ def main(path='.'):
 
                         # this gets the question of the problem
                         question = problem.get_attribute("innerHTML").encode('utf-8')
+                        question = question.decode('utf-8')
 
                         # getting submission button
                         nextButton = WebDriverWait(driver, 30).until(EC.presence_of_element_located(("link text", "Submissions")))
@@ -252,7 +253,7 @@ def main(path='.'):
 
 
                 # making the file
-                f = open(folder + problemname.replace(" ","-").lower() + ext,  'w+')
+                f = open(folder + problemname.replace(" ","-").lower() + ext,  'w+', encoding="utf-8")
 
                 # writing the code to the file
                 f.write(code)
@@ -260,7 +261,7 @@ def main(path='.'):
                 f.close()
 
                 # making the readme file
-                f = open(folder + f"README.md", "w+")
+                f = open(folder + f"README.md", "w+", encoding="utf-8")
                 f.write(f"# [{problemname}]({links_to_problems[i]})\n")
                 f.write(question)
                 f.flush()
