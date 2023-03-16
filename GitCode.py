@@ -46,23 +46,31 @@ def get_links(driver):
     list_of_links = []
     list_of_names = []
 
-    def find(driver):
-        # getting the navigation element
-        return driver.find_elements(By.XPATH, ".//nav[@role = 'navigation']//button[@aria-label='next']")[-1]
-
     page = 1
+    breakOut = False
 
     while (True):
+
+        if(breakOut):
+            break
         # getting the list of problems
         print("Page: " + str(page))
 
         if page != 1:
-            WebDriverWait(driver, 20).until(find)
-            try:
-                driver.find_elements(By.XPATH, ".//nav[@role = 'navigation']//button[@aria-label='next']")[-1].click()
-            except Exception as e:
-                # print(e)
-                break
+            while(True):
+                try:
+                    nextButton = driver.find_elements(By.XPATH, ".//nav[@role = 'navigation']//button[@aria-label='next']")[-1]
+                    time.sleep(1)
+                    try:
+                        nextButton.click()
+                    except:
+                        breakOut = True
+                        break
+                except Exception as e:
+                    print(e)
+                    driver.refresh()
+                    time.sleep(3)
+                    
 
         ind = 0;
 
@@ -312,6 +320,7 @@ def main(path='.'):
                     except Exception as e:
                         print(e)
                         driver.refresh()
+                        time.sleep(2)
 
                 commitMessage = f"Time: {runtime} ({runtimeBeats}) | Memory: {memory} ({memoryBeats}) - GitCode"
 
