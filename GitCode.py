@@ -1,9 +1,12 @@
 # installing dependencies
+# import os
+# os.system("pip install selenium")
+# os.system("pip install webdriver_manager")
 import os
-os.system("pip install selenium")
-os.system("pip install webdriver_manager")
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.core.utils import ChromeType
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.alert import Alert
@@ -125,9 +128,35 @@ def acceptAlert(alert):
     except:
         pass
 
+def initialiseDriver(option):
+    if option == 1:
+        return webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    elif option == 2:
+        return webdriver.Firefox(service=Service(GeckoDriverManager().install()))
+
 def main(path='.'):
+    driver, selected = "", False
+    browser_options = '''
+    1. Chrome
+    2. Firefox
+    3. Exit
+    '''
     # setting up the driver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    # driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
+    while not selected:
+        print(browser_options)
+        option = int(input("-----> "))
+        if option == 3:
+            print("Exiting, Goodbye from GitCode!")
+            exit(0)
+        elif not (option == 1 or option == 2):
+            print("Invalid Browser Selection!")
+            exit(0)
+        else:
+            driver = initialiseDriver(option)
+            print(driver)
+            selected = True
     driver.maximize_window()
 
     # making alert object
@@ -145,7 +174,7 @@ def main(path='.'):
     driver.get("https://leetcode.com/")
 
     # printing the nessary info for the user not to login
-    driver.execute_script("window.alert('Greetings from GitCode! Please donot interact with the browser now.')")
+    driver.execute_script("window.alert('Greetings from GitCode! Please do not interact with the browser now.')")
     time.sleep(5)
     acceptAlert(alert=alert)
 
@@ -345,6 +374,8 @@ def main(path='.'):
 
 
 if __name__ == "__main__":
+    os.system("pip install -r requirements.txt")
     os.system("git pull")
+    os.system("clear")
     main(path = input("Enter the path to save the files: "))
     os.system("git push")
