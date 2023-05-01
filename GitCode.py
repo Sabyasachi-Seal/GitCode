@@ -332,48 +332,48 @@ def main(path='.'):
                 # getting the runtime, runtime beats, memory, and memory beats
                 while (True):
                     try:
+                        # find the details button
+                        detailsElement = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Details')]")))
+                        # get its parent
+                        detailsParent = detailsElement.find_element(By.XPATH, "..")
+
                         # this is just the runtime text element
-                        runtimeElement = WebDriverWait(driver, 30).until(
-                            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Runtime')]")))
+                        runtimeElement = WebDriverWait(detailsParent, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Runtime')]")))
+                        print(runtimeElement.text)
                         # this is the parent div of the runtime text element
-                        runtimeParent = runtimeElement.find_element(
-                            By.XPATH, "..")
+                        runtimeParent = runtimeElement.find_element(By.XPATH, "..")
+                        print(runtimeParent.text)
                         # this is the parent div of the parent div of the whole runtime element
-                        runtimeClass = runtimeParent.find_element(
-                            By.XPATH, "..")
+                        runtimeClass = runtimeParent.find_element(By.XPATH, "..")
+                        print(runtimeClass.text)
                         # this is the beats % for the runtime
-                        runtimeBeats = runtimeClass.find_element(
-                            By.XPATH, ".//*[contains(text(), 'Beats')]")
+                        runtimeBeats = runtimeClass.find_element(By.XPATH, ".//*[contains(text(), 'Beats')]")
                         # this is the parent div of the beats% for the
-                        runtimeBeatsParent = runtimeBeats.find_element(
-                            By.XPATH, "..")
+                        runtimeBeatsParent = runtimeBeats.find_element(By.XPATH, "..")
                         # this is the text of the beats% for the runtime
                         runtimeBeats = runtimeBeatsParent.text.split("\n")[-1]
                         # this is the runtime used
-                        runtime = runtimeParent.text.split(
-                            "\n")[-1].replace(" ", "")
+                        runtime = runtimeParent.text.split("\n")[-1].replace(" ", "")
 
                         # print(runtime, runtimeBeats)
 
                         # this is just the memory text element
-                        memoryElement = WebDriverWait(driver, 30).until(
-                            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Memory')]")))
+                        memoryElement = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Memory')]")))
+                        print(memoryElement.text)
                         # this is the parent div of the memory text element
-                        memoryParent = memoryElement.find_element(
-                            By.XPATH, "..")
+                        memoryParent = memoryElement.find_element(By.XPATH, "..")
+                        print(memoryParent.text)
                         # this is the parent div of the parent div of the whole memory element
                         memoryClass = memoryParent.find_element(By.XPATH, "..")
+                        print(memoryClass.text)
                         # this is the beats % for the memory
-                        memoryBeats = memoryClass.find_element(
-                            By.XPATH, ".//*[contains(text(), 'Beats')]")
+                        memoryBeats = memoryClass.find_element(By.XPATH, ".//*[contains(text(), 'Beats')]")
                         # this is the parent div of the beats% for the
-                        memoryBeatsParent = memoryBeats.find_element(
-                            By.XPATH, "..")
+                        memoryBeatsParent = memoryBeats.find_element(By.XPATH, "..")
                         # this is the text of the beats% for the memory
                         memoryBeats = memoryBeatsParent.text.split("\n")[-1]
                         # this is the memory used
-                        memory = memoryParent.text.split(
-                            "\n")[-1].replace(" ", "")
+                        memory = memoryParent.text.split("\n")[-1].replace(" ", "")
 
                         # print(memory, memoryBeats)
 
