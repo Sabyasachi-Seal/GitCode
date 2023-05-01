@@ -2,6 +2,7 @@
 import os
 import time
 
+
 def get_links(driver):
     # getting the solved problems
 
@@ -224,8 +225,16 @@ def main(path='.'):
 
                 # getting the name of the problem
                 problemname = names[i].split(".")[-1].replace(".", "").strip()
+                problemnumber = names[i].split(".")[0].strip()
 
                 folder = str(path) + "/" + problemname + "/"
+
+                skipfilename = problemnumber+"-"+problemname.lower().replace(" ", "-")
+                print(skipfilename)
+                # need to check if the problem is already present from leetcode
+                if skipfilename in os.listdir(path):
+                    i = i + 1
+                    continue
 
                 if os.path.exists(folder):
                     i = i + 1
@@ -238,21 +247,25 @@ def main(path='.'):
                 while True:
                     try:
                         # this gets the div with the div of the text of the problem
-                        problem = WebDriverWait(driver, 30).until(
-                            EC.presence_of_element_located((By.CLASS_NAME, "_1l1MA")))
+                        problem = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "_1l1MA")))
 
                         # this gets the question of the problem
-                        question = problem.get_attribute(
-                            "innerHTML").encode('utf-8')
+                        question = problem.get_attribute("innerHTML").encode('utf-8')
                         question = question.decode('utf-8')
+                        break
+                    except Exception as e:
+                        driver.refresh()
+                        time.sleep(2)
 
-                        # getting submission button
-                        nextButton = WebDriverWait(driver, 30).until(
-                            EC.presence_of_element_located(("link text", "Submissions")))
+                while True:
+                    try:
+                         # getting submission button
+                        nextButton = WebDriverWait(driver, 30).until(EC.presence_of_element_located(("link text", "Submissions")))
                         nextButton.click()
                         break
                     except Exception as e:
                         driver.refresh()
+                        time.sleep(2)
 
                 # getting the accepted button
                 while (True):
@@ -263,6 +276,7 @@ def main(path='.'):
                         break
                     except Exception as e:
                         driver.refresh()
+                        time.sleep(2)
 
                 # getting the first accepted submission code
                 while (True):
@@ -281,7 +295,8 @@ def main(path='.'):
                         lang = code_page.get_attribute("class")
                         break
                     except Exception as e:
-                        continue
+                        driver.refresh()
+                        time.sleep(2)
 
                 time.sleep(2)
 
@@ -367,7 +382,7 @@ def main(path='.'):
                     except Exception as e:
                         print(e)
                         driver.refresh()
-                        time.sleep(2)
+                        time.sleep(5)
 
                 commitMessage = f"Time: {runtime} ({runtimeBeats}) | Memory: {memory} ({memoryBeats}) - GitCode"
 
@@ -404,4 +419,4 @@ if __name__ == "__main__":
     from webdriver_manager.chrome import ChromeDriverManager
     from selenium.webdriver.support import expected_conditions as EC
     main(path=input("Enter the path to save the files: "))
-    os.system("git push")
+    # os.system("git push")
