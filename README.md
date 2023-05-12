@@ -1,5 +1,4 @@
 # GitCode - LeetCode to GitHub Exporter
-# GitChef - CodeChef to GitHub Exporter
 Use this tool to download your solutions from [LeetCode.com](leetcode.com) and [CodeChef.com](codechef.com) to your local machine. The tool will go through your account and download all the solutions you have submitted so far. It also takes the questions from the website and saves them in a folder with the same name as the question. The tool will also create a ```README.md``` file for each question and add the question description to it. 
 
 ## Supported operations
@@ -26,6 +25,8 @@ Use this tool to download your solutions from [LeetCode.com](leetcode.com) and [
 - Run GitCode.py
 
 ---
+
+# GitChef - CodeChef to GitHub Exporter [Documentation Pending]
 
 ### Contibutions and Feedback are welcome | 2023 - [Sabyasachi Seal](https://github.com/Sabyasachi-Seal)
 
