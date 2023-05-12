@@ -1,5 +1,6 @@
 # GitCode - LeetCode to GitHub Exporter
-Use this tool to download your solutions from [LeetCode.com](leetcode.com) to your local machine. The tool will go through your account and download all the solutions you have submitted so far. It also takes the questions from the website and saves them in a folder with the same name as the question. The tool will also create a ```README.md``` file for each question and add the question description to it. 
+# GitChef - CodeChef to GitHub Exporter
+Use this tool to download your solutions from [LeetCode.com](leetcode.com) and [CodeChef.com](codechef.com) to your local machine. The tool will go through your account and download all the solutions you have submitted so far. It also takes the questions from the website and saves them in a folder with the same name as the question. The tool will also create a ```README.md``` file for each question and add the question description to it. 
 
 ## Supported operations
 - Support both O-Auth and User-Pass login system for LeetCode.
@@ -26,4 +27,6 @@ Use this tool to download your solutions from [LeetCode.com](leetcode.com) to yo
 
 ---
 
-### Contibutions and Feedback are welcome | 2023 - Sabyasachi Seal
+### Contibutions and Feedback are welcome | 2023 - [Sabyasachi Seal](https://github.com/Sabyasachi-Seal)
+
+Other contributors - [AdityaSeth777](https://github.com/AdityaSeth777), [Ayush786113](https://github.com/Ayush786113)
