@@ -1,6 +1,15 @@
 # installing dependencies
 import os
 import time
+from selenium import webdriver
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.common.alert import Alert
+    from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.support.ui import WebDriverWait
+    from webdriver_manager.core.utils import ChromeType
+    from webdriver_manager.firefox import GeckoDriverManager
+    from webdriver_manager.chrome import ChromeDriverManager
+    from selenium.webdriver.support import expected_conditions as EC
 
 
 def get_links(driver):
@@ -409,14 +418,5 @@ def main(path='.'):
 
 if __name__ == "__main__":
     os.system("clear && pip install -r requirements.txt && git pull && clear")
-    from selenium import webdriver
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.common.alert import Alert
-    from selenium.webdriver.chrome.service import Service
-    from selenium.webdriver.support.ui import WebDriverWait
-    from webdriver_manager.core.utils import ChromeType
-    from webdriver_manager.firefox import GeckoDriverManager
-    from webdriver_manager.chrome import ChromeDriverManager
-    from selenium.webdriver.support import expected_conditions as EC
     main(path=input("Enter the path to save the files: "))
     # os.system("git push")
