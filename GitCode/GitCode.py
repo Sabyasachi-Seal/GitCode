@@ -419,4 +419,8 @@ def main(path='.'):
 if __name__ == "__main__":
     os.system("clear && pip install -r requirements.txt && git pull && clear")
     main(path=input("Enter the path to save the files: "))
-    # os.system("git push")
+    driver.close()
+    driver.quit()
+    
+
+# os.system("git push")
