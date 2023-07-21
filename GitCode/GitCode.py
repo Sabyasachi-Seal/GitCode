@@ -1,5 +1,19 @@
 # installing dependencies
+import os
 import time
+
+commands = [
+            'clear', 
+            'git pull',
+            'pip install --upgrade --no-deps --force-reinstall -r requirements.txt', 
+            'pip install webdriver-manager --upgrade --no-deps --force-reinstall', 
+            'pip install packaging', 
+            'clear'
+            ]
+
+for command in commands:
+    os.system(command)
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.alert import Alert
@@ -9,9 +23,6 @@ from webdriver_manager.core.utils import ChromeType
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
-import os
-os.system('''clear && pip install --upgrade --no-deps --force-reinstall -r requirements.txt && pip install webdriver-manager --upgrade --no-deps --force-reinstall && pip install packaging && git pull''')
-
 
 def get_links(driver):
     # getting the solved problems
