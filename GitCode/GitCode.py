@@ -282,16 +282,22 @@ def main(path='.', webdriver=None):
 
                 # getting the accepted button
                 tries = 5
+                accepted = False
                 while (tries):
                     try:
                         nextButton = WebDriverWait(driver, 30).until(
                             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Accepted')]")))
                         nextButton.click()
+                        accepted = True
                         break
                     except Exception as e:
                         driver.refresh()
                         time.sleep(2)
                         tries = tries-1
+
+                if not accepted:
+                    i = i + 1
+                    continue
 
                 # getting the first accepted submission code
                 while (True):
@@ -349,12 +355,13 @@ def main(path='.', webdriver=None):
                 memory = "N/A"
                 memoryBeats = "N/A"
                 
+                details = None
                 # Details button
                 while (True):
                     try:
-                        ff = WebDriverWait(driver, 30).until(EC.presence_of_element_located(
+                        details = WebDriverWait(driver, 30).until(EC.presence_of_element_located(
                             (By.XPATH, "//button[contains(text(), 'Details')]")))
-                        ff.click()
+                        details.click()
                         break
                     except Exception as e:
                         driver.refresh()
