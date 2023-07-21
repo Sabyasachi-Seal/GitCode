@@ -1,17 +1,17 @@
 # installing dependencies
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from webdriver_manager.core.utils import ChromeType
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support import expected_conditions as EC
 import os
 os.system('''clear && pip install --upgrade --no-deps --force-reinstall -r requirements.txt && pip install webdriver-manager --upgrade --no-deps --force-reinstall && pip install packaging && git pull''')
 
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
-from webdriver_manager.core.utils import ChromeType
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.alert import Alert
-from selenium.webdriver.common.by import By
-from selenium import webdriver
-import time
 
 def get_links(driver):
     # getting the solved problems
@@ -140,9 +140,9 @@ def acceptAlert(alert):
 
 def initialiseDriver(option):
     if option == 1:
-        return webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        return webdriver.Chrome()
     elif option == 2:
-        return webdriver.Firefox(service=Service(GeckoDriverManager().install()))
+        return webdriver.Firefox()
 
 
 def main(path='.', webdriver=None):
@@ -164,7 +164,7 @@ def main(path='.', webdriver=None):
             print("Invalid Browser Selection!")
             exit(0)
         else:
-            driver = webdriver.Chrome()
+            driver = initialiseDriver(option)
             print(driver)
             selected = True
 
@@ -281,7 +281,8 @@ def main(path='.', webdriver=None):
                         time.sleep(2)
 
                 # getting the accepted button
-                while (True):
+                tries = 5
+                while (tries):
                     try:
                         nextButton = WebDriverWait(driver, 30).until(
                             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Accepted')]")))
@@ -290,6 +291,7 @@ def main(path='.', webdriver=None):
                     except Exception as e:
                         driver.refresh()
                         time.sleep(2)
+                        tries = tries-1
 
                 # getting the first accepted submission code
                 while (True):
@@ -342,73 +344,125 @@ def main(path='.', webdriver=None):
 
                 os.system(f"git add {path}/")
 
-                # getting the runtime, runtime beats, memory, and memory beats
+                runtime = "N/A"
+                runtimeBeats = "N/A"
+                memory = "N/A"
+                memoryBeats = "N/A"
+                
+                # Details button
                 while (True):
                     try:
-                        # find the details button
-                        detailsElement = WebDriverWait(driver, 30).until(
-                            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Details')]")))
-                        # get its parent
-                        detailsParent = detailsElement.find_element(
-                            By.XPATH, "..")
-
-                        # this is just the runtime text element
-                        runtimeElement = WebDriverWait(detailsParent, 30).until(
-                            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Runtime')]")))
-                        print(runtimeElement.text)
-                        # this is the parent div of the runtime text element
-                        runtimeParent = runtimeElement.find_element(
-                            By.XPATH, "..")
-                        print(runtimeParent.text)
-                        # this is the parent div of the parent div of the whole runtime element
-                        runtimeClass = runtimeParent.find_element(
-                            By.XPATH, "..")
-                        print(runtimeClass.text)
-                        # this is the beats % for the runtime
-                        runtimeBeats = runtimeClass.find_element(
-                            By.XPATH, ".//*[contains(text(), 'Beats')]")
-                        # this is the parent div of the beats% for the
-                        runtimeBeatsParent = runtimeBeats.find_element(
-                            By.XPATH, "..")
-                        # this is the text of the beats% for the runtime
-                        runtimeBeats = runtimeBeatsParent.text.split("\n")[-1]
-                        # this is the runtime used
-                        runtime = runtimeParent.text.split(
-                            "\n")[-1].replace(" ", "")
-
-                        # print(runtime, runtimeBeats)
-
-                        # this is just the memory text element
-                        memoryElement = WebDriverWait(driver, 30).until(
-                            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Memory')]")))
-                        print(memoryElement.text)
-                        # this is the parent div of the memory text element
-                        memoryParent = memoryElement.find_element(
-                            By.XPATH, "..")
-                        print(memoryParent.text)
-                        # this is the parent div of the parent div of the whole memory element
-                        memoryClass = memoryParent.find_element(By.XPATH, "..")
-                        print(memoryClass.text)
-                        # this is the beats % for the memory
-                        memoryBeats = memoryClass.find_element(
-                            By.XPATH, ".//*[contains(text(), 'Beats')]")
-                        # this is the parent div of the beats% for the
-                        memoryBeatsParent = memoryBeats.find_element(
-                            By.XPATH, "..")
-                        # this is the text of the beats% for the memory
-                        memoryBeats = memoryBeatsParent.text.split("\n")[-1]
-                        # this is the memory used
-                        memory = memoryParent.text.split(
-                            "\n")[-1].replace(" ", "")
-
-                        # print(memory, memoryBeats)
-
+                        ff = WebDriverWait(driver, 30).until(EC.presence_of_element_located(
+                            (By.XPATH, "//button[contains(text(), 'Details')]")))
+                        ff.click()
                         break
-
                     except Exception as e:
-                        print(e)
                         driver.refresh()
+                        print(e)
                         time.sleep(5)
+                
+                if(not (runtime or runtimeBeats)):
+                    # Runtime button
+                    while (True):
+                        try:
+                            ff = WebDriverWait(driver, 30).until(EC.presence_of_element_located(
+                                (By.XPATH, "//button[contains(text(), 'Runtime')]")))
+                            ff.click()
+                            break
+                        except Exception as e:
+                            driver.refresh()
+                            time.sleep(5)
+
+                    tries = 5
+                    # getting the runtime, runtime beats, memory, and memory beats
+                    while (tries):
+                        try:
+                            # # find the details button
+                            # detailsElement = WebDriverWait(driver, 30).until(
+                            #     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Details')]")))
+                            # # get its parent
+                            # detailsParent = detailsElement.find_element(
+                            #     By.XPATH, "..")
+
+                            # this is just the runtime text element
+                            runtimeElement = WebDriverWait(driver, 30).until(
+                                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Runtime')]")))
+                            print(runtimeElement.text)
+                            # this is the parent div of the runtime text element
+                            runtimeParent = runtimeElement.find_element(
+                                By.XPATH, "..")
+                            print(runtimeParent.text)
+                            # this is the parent div of the parent div of the whole runtime element
+                            runtimeClass = runtimeParent.find_element(
+                                By.XPATH, "..")
+                            print(runtimeClass.text)
+                            # this is the beats % for the runtime
+                            runtimeBeats = runtimeClass.find_element(
+                                By.XPATH, ".//*[contains(text(), 'Beats')]")
+                            # this is the parent div of the beats% for the
+                            runtimeBeatsParent = runtimeBeats.find_element(
+                                By.XPATH, "..")
+                            # this is the text of the beats% for the runtime
+                            runtimeBeats = runtimeBeatsParent.text.split("\n")[-1]
+                            # this is the runtime used
+                            runtime = runtimeParent.text.split(
+                                "\n")[-1].replace(" ", "")
+
+                            # print(runtime, runtimeBeats)
+                            break
+                        except Exception as e:
+                            print(e)
+                            driver.refresh()
+                            tries = tries-1
+                            time.sleep(5)
+
+
+                if(not (memory or memoryBeats)):
+                    # Memory button
+                    while (True):
+                        try:
+                            ff = WebDriverWait(driver, 30).until(EC.presence_of_element_located(
+                                (By.XPATH, "//button[contains(text(), 'Memory')]")))
+                            ff.click()
+                            break
+                        except Exception as e:
+                            driver.refresh()
+                            time.sleep(5)
+
+                    tries = 5
+                    while (tries):
+                        try:
+                            # this is just the memory text element
+                            memoryElement = WebDriverWait(driver, 30).until(
+                                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Memory')]")))
+                            print(memoryElement.text)
+                            # this is the parent div of the memory text element
+                            memoryParent = memoryElement.find_element(
+                                By.XPATH, "..")
+                            print(memoryParent.text)
+                            # this is the parent div of the parent div of the whole memory element
+                            memoryClass = memoryParent.find_element(By.XPATH, "..")
+                            print(memoryClass.text)
+                            # this is the beats % for the memory
+                            memoryBeats = memoryClass.find_element(
+                                By.XPATH, ".//*[contains(text(), 'Beats')]")
+                            # this is the parent div of the beats% for the
+                            memoryBeatsParent = memoryBeats.find_element(
+                                By.XPATH, "..")
+                            # this is the text of the beats% for the memory
+                            memoryBeats = memoryBeatsParent.text.split("\n")[-1]
+                            # this is the memory used
+                            memory = memoryParent.text.split(
+                                "\n")[-1].replace(" ", "")
+
+                            # print(memory, memoryBeats)
+                            break
+                        except Exception as e:
+                            print(e)
+                            driver.refresh()
+                            tries = tries-1
+                            time.sleep(5)
+
 
                 commitMessage = f"Time: {runtime} ({runtimeBeats}) | Memory: {memory} ({memoryBeats}) - GitCode"
 
@@ -432,7 +486,9 @@ def main(path='.', webdriver=None):
 
             driver.close()
 
+
 if __name__ == "__main__":
-    path=main(input("Enter the path to save the files: "), webdriver=webdriver)
+    path = main(input("Enter the path to save the files: "),
+                webdriver=webdriver)
 
 # os.system("git push")
