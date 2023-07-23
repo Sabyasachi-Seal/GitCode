@@ -1,25 +1,11 @@
 # installing dependencies
 import os
 import time
-
-commands = [
-            'clear', 
-            'git pull',
-            'pip install --upgrade --no-deps --force-reinstall -r requirements.txt', 
-            'pip install webdriver-manager --upgrade --no-deps --force-reinstall', 
-            'pip install packaging', 
-            'clear'
-            ]
-
-for command in commands:
-    os.system(command)
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.core.utils import ChromeType
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
@@ -156,28 +142,32 @@ def initialiseDriver(option):
         return webdriver.Firefox()
 
 
-def main(path='.', webdriver=None):
-    driver, selected = None, False
-    browser_options = '''
-    1. Chrome
-    2. Firefox
-    3. Exit
-    '''
+def get_solutions(path, browser):
 
-    while not selected:
+    # driver, selected = None, False
 
-        print(browser_options)
-        option = int(input("-----> "))
-        if option == 3:
-            print("Exiting, Goodbye from GitCode!")
-            exit(0)
-        elif not (option == 1 or option == 2):
-            print("Invalid Browser Selection!")
-            exit(0)
-        else:
-            driver = initialiseDriver(option)
-            print(driver)
-            selected = True
+    # browser_options = '''
+    # 1. Chrome
+    # 2. Firefox
+    # 3. Exit
+    # '''
+
+    # while not selected:
+    #     print(browser_options)
+    #     option = int(input("-----> "))
+    #     if option == 3:
+    #         print("Exiting, Goodbye from GitCode!")
+    #         exit(0)
+    #     elif not (option == 1 or option == 2):
+    #         print("Invalid Browser Selection!")
+    #         exit(0)
+    #     else:
+    #         driver = initialiseDriver(option)
+    #         print(driver)
+    #         selected = True
+
+    driver = initialiseDriver(browser)
+    print(driver)
 
     driver.maximize_window()
 
@@ -502,9 +492,25 @@ def main(path='.', webdriver=None):
 
             driver.close()
 
+    return {}, 200
 
-if __name__ == "__main__":
-    path = main(input("Enter the path to save the files: "),
-                webdriver=webdriver)
 
-# os.system("git push")
+def main(path=".", browser=1):
+    commands = [
+            'clear', 
+            'git pull',
+            'pip install --upgrade --no-deps --force-reinstall -r requirements.txt', 
+            'pip install webdriver-manager --upgrade --no-deps --force-reinstall', 
+            'pip install packaging', 
+            'clear'
+            ]
+
+    for command in commands:
+        os.system(command)
+
+    get_solutions(path, browser)
+
+    # os.system("git push")
+
+if __name__ == '__main__':
+    main()

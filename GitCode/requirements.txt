@@ -19,3 +19,4 @@ trio-websocket==0.10.2
 urllib3==1.26.15
 webdriver-manager>=3.8.5
 wsproto==1.2.0
+markdown>=3.4.3
