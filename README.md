@@ -38,9 +38,10 @@ substituted with its name or the listed packages are cloned and built itself wit
 
 ```shell
 # Install dependencies for GitCode
-pacman -S python-pysocks python-async_generator python-attrs python-certifi python-charset-normalizer \
-          python-exceptiongroup python-h11 python-idna python-outcome python-packaging python-dotenv \
-          python-requests python-sniffio python-sortedcontainers python-tqdm python-trio python-trio-websocket \
+pacman -S python-pysocks python-async_generator python-attrs python-certifi \
+          python-charset-normalizer python-exceptiongroup python-h11 python-idna \
+          python-outcome python-packaging python-dotenv python-requests python-sniffio \
+          python-sortedcontainers python-tqdm python-trio python-trio-websocket \
           python-urllib3 python-wsproto
 paru -S python-selenium python-webdriver-manager python-pybrowsers python-poetry
 
