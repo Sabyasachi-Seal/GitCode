@@ -17,12 +17,12 @@ These tools make it possible to extract all your solutions from [LeetCode](https
 
 - [Setup Git](https://docs.github.com/en/get-started/quickstart/set-up-git) with your GitHub account on your local
   machine
-- Optionally [Fork](/fork) this repository
+- Optionally [fork](https://github.com/Sabyasachi-Seal/GitCode/fork) this repository
 - Clone the repository on your local machine
 - Install the projects' dependencies (see [Dependencies](#Dependencies))
-- Run either `GitCode.py` or `GitChef.py` with:
-    - `python ./GitCode/GitCode.py`
-    - `python ./GitChef/GitChef.py`
+- Run either `GitCode.py` or `GitChef.py` from the project root folder with:
+    - `cd GitCode && python ./GitCode.py`
+    - `cd GitChef && python ./GitChef.py`
 
 ### Dependencies
 
