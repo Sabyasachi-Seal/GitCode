@@ -218,7 +218,8 @@ def main(path='.', webdriver=None):
             # waiting till the login is completed
             sleepTime = 0
             sleepMax = 180  # 3 mins
-            while (len(driver.find_elements(By.XPATH, ".//div[@id = 'navbar-right-container']//div")) <= 1):
+
+            while (len(driver.find_elements(By.XPATH, ".//div[@id = 'home-app']//div")) <= 1):
                 time.sleep(1)
                 sleepMax = sleepMax + 1
                 if sleepTime > sleepMax:
