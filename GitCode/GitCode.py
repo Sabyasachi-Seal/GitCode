@@ -19,7 +19,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.core.utils import ChromeType
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
@@ -151,9 +150,9 @@ def acceptAlert(alert):
 
 def initialiseDriver(option):
     if option == 1:
-        return webdriver.Chrome()
+        return webdriver.Chrome(ChromeDriverManager().install())
     elif option == 2:
-        return webdriver.Firefox()
+        return webdriver.Firefox(GeckoDriverManager().install())
 
 
 def main(path='.', webdriver=None):
